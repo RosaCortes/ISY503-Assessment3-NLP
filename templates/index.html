@@ -121,23 +121,7 @@
     .result-box.positive .result-label { color: #2d9e6b; }
     .result-box.negative .result-label { color: #e05555; }
 
-    .progress-bar-track {
-      background: #e0e0e0;
-      border-radius: 99px;
-      height: 6px;
-      width: 100%;
-      overflow: hidden;
-    }
 
-    .progress-bar-fill {
-      height: 100%;
-      border-radius: 99px;
-      width: 0%;
-      transition: width 0.6s ease;
-    }
-
-    .result-box.positive .progress-bar-fill { background: #2d9e6b; }
-    .result-box.negative .progress-bar-fill { background: #e05555; }
 
     .hint {
       text-align: center;
@@ -185,9 +169,7 @@
   <div class="result-box" id="resultBox">
     <span class="result-emoji" id="resultEmoji"></span>
     <div class="result-label" id="resultLabel"></div>
-    <div class="progress-bar-track">
-      <div class="progress-bar-fill" id="progressFill"></div>
-    </div>
+
   </div>
 
   <p class="hint">Press <kbd>Enter</kbd> to analyse</p>
@@ -223,18 +205,13 @@
     const box = document.getElementById("resultBox");
     const emoji = document.getElementById("resultEmoji");
     const label = document.getElementById("resultLabel");
-    const fill = document.getElementById("progressFill");
 
     box.className = "result-box " + (result === "Positive" ? "positive" : "negative");
     emoji.textContent = result === "Positive" ? "😊" : "😞";
     label.textContent = result === "Positive" ? "Positive review" : "Negative review";
     box.style.display = "block";
 
-    // animate bar
-    fill.style.width = "0%";
-    setTimeout(() => {
-      fill.style.width = result === "Positive" ? "45%" : "20%";
-    }, 50);
+
   }
 
   // allow pressing Enter to submit
