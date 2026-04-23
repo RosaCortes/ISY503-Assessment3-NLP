@@ -19,6 +19,13 @@ The objective is to train a neural network model that can:
 - model → trained models
 - app → application (web interface)
 - results → evaluation outputs
+- templates/index.html -> Frontend UI (sentiment analysis webpage)
+  Built by Yeeun. Contains the text input, "Analyse" button, and result display on the bottom
+  Mock prediction function placed temporarily until predict.py is connected.
+
+## To connect the UI
+In app.py, add this route:
+  return render_template("index.html")
 
 ## Team Members and Roles
 - Isha → Data preprocessing
