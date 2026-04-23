@@ -22,8 +22,7 @@ The objective is to train a neural network model that can:
 - templates/index.html -> Frontend UI (sentiment analysis webpage)
   Built by Yeeun. Contains the text input, "Analyse" button, and result display on the bottom
   Mock prediction function placed temporarily until predict.py is connected.
-
-## To connect the UI
+To connect the UI
 In app.py, add this route:
   return render_template("index.html")
 
@@ -38,6 +37,8 @@ In app.py, add this route:
 - Machine Learning / Deep Learning
 - NLP techniques
 - GitHub for version control
+- HTML / CSS / JavaScript (Frontend UI)
+- Flask (for web deployment & integration)
 
 ## Notes
 This project follows the requirements of ISY503 Assessment 3, including data preprocessing, model training, evaluation, and deployment.
