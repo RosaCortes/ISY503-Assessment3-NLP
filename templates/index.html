@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Review Teller</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f0f2f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 32px rgba(100, 80, 200, 0.08);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .sparkle {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #6C63FF;
+      margin-bottom: 0.4rem;
+    }
+
+    .header p {
+      color: #888;
+      font-size: 0.95rem;
+    }
+
+    textarea {
+      width: 100%;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: #333;
+      resize: none;
+      height: 140px;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    textarea:focus {
+      border-color: #6C63FF;
+    }
+
+    textarea::placeholder {
+      color: #bbb;
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #a084e8, #6C63FF);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-bottom: 1.2rem;
+    }
+
+    button:hover { opacity: 0.92; }
+    button:active { transform: scale(0.98); }
+
+    .result-box {
+      border-radius: 16px;
+      padding: 1.5rem 1.2rem 1.2rem;
+      text-align: center;
+      display: none;
+    }
+
+    .result-box.positive {
+      background: #edfaf3;
+    }
+
+    .result-box.negative {
+      background: #fef1f1;
+    }
+
+    .result-emoji {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-label {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+    }
+
+    .result-box.positive .result-label { color: #2d9e6b; }
+    .result-box.negative .result-label { color: #e05555; }
+
+    .progress-bar-track {
+      background: #e0e0e0;
+      border-radius: 99px;
+      height: 6px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+
+    .result-box.positive .progress-bar-fill { background: #2d9e6b; }
+    .result-box.negative .progress-bar-fill { background: #e05555; }
+
+    .hint {
+      text-align: center;
+      color: #aaa;
+      font-size: 0.82rem;
+      margin-top: 1.2rem;
+    }
+
+    .hint kbd {
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 1px 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <svg width="44" height="40" viewBox="0 0 44 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block; margin: 0 auto 0.5rem;">
+      <defs>
+        <linearGradient id="bubbleGrad" x1="0" y1="0" x2="44" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#a084e8"/>
+          <stop offset="100%" stop-color="#6C63FF"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="44" height="32" rx="10" fill="url(#bubbleGrad)"/>
+      <polygon points="10,32 4,40 20,32" fill="url(#bubbleGrad)"/>
+      <circle cx="14" cy="16" r="3" fill="white"/>
+      <circle cx="22" cy="16" r="3" fill="white"/>
+      <circle cx="30" cy="16" r="3" fill="white"/>
+    </svg>
+    <h1>Review Teller</h1>
+    <p>Find out if your review is good or bad</p>
+  </div>
+
+  <textarea id="reviewInput" placeholder="Type or paste a review here..."></textarea>
+
+  <button onclick="analyse()">Analyse</button>
+
+  <div class="result-box" id="resultBox">
+    <span class="result-emoji" id="resultEmoji"></span>
+    <div class="result-label" id="resultLabel"></div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <p class="hint">Press <kbd>Enter</kbd> to analyse</p>
+</div>
+
+<script>
+  // -------------------------------------------------------
+  // MOCK predict function — replace this later with a real
+  // call to your Flask backend once predict.py is ready.
+  // -------------------------------------------------------
+  function mockPredict(text) {
+    const lower = text.toLowerCase();
+    const positiveWords = ["good","great","love","excellent","amazing","perfect","best","fantastic","happy","wonderful","nice","awesome"];
+    const negativeWords = ["bad","terrible","awful","hate","horrible","worst","poor","disappointing","broken","useless","ugly","slow"];
+
+    let score = 0;
+    positiveWords.forEach(w => { if (lower.includes(w)) score++; });
+    negativeWords.forEach(w => { if (lower.includes(w)) score--; });
+
+    return score >= 0 ? "Positive" : "Negative";
+  }
+  // -------------------------------------------------------
+
+  function analyse() {
+    const text = document.getElementById("reviewInput").value.trim();
+    if (!text) return;
+
+    const result = mockPredict(text);   // <-- swap this line for Flask fetch later
+    showResult(result);
+  }
+
+  function showResult(result) {
+    const box = document.getElementById("resultBox");
+    const emoji = document.getElementById("resultEmoji");
+    const label = document.getElementById("resultLabel");
+    const fill = document.getElementById("progressFill");
+
+    box.className = "result-box " + (result === "Positive" ? "positive" : "negative");
+    emoji.textContent = result === "Positive" ? "😊" : "😞";
+    label.textContent = result === "Positive" ? "Positive review" : "Negative review";
+    box.style.display = "block";
+
+    // animate bar
+    fill.style.width = "0%";
+    setTimeout(() => {
+      fill.style.width = result === "Positive" ? "45%" : "20%";
+    }, 50);
+  }
+
+  // allow pressing Enter to submit
+  document.getElementById("reviewInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      analyse();
+    }
+  });
+</script>
+
+</body>
+</html>
