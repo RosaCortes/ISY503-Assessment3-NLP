@@ -66,3 +66,32 @@ This project follows the requirements of ISY503 Assessment 3, including data pre
 - Type a product review into the text box
 - Click Analyse or press Enter
 - The result will show as Positive or Negative
+
+## How to Run the Website (Mac)
+
+### Requirements
+- Python 3.x
+- pip
+
+### Installation
+1. Clone the repository and navigate to the folder
+   git clone https://github.com/RosaCortes/ISY503-Assessment3-NLP.git
+   cd ISY503-Assessment3-NLP
+
+2. Create and activate a virtual environment
+   python3 -m venv venv
+   source venv/bin/activate
+
+3. Install dependencies
+   pip3 install flask tensorflow
+
+4. Run the app
+   python3 app.py
+
+5. Open your browser and go to
+   http://127.0.0.1:5000
+
+### Usage
+- Type a product review into the text box
+- Click Analyse or press Enter
+- The result will show as Positive or Negative
