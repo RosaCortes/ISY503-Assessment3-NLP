@@ -42,3 +42,27 @@ In app.py, add this route:
 
 ## Notes
 This project follows the requirements of ISY503 Assessment 3, including data preprocessing, model training, evaluation, and deployment.
+
+## How to Run the Website
+
+### Requirements
+- Python 3.x
+- pip
+
+### Installation
+1. Clone the repository
+   git clone https://github.com/RosaCortes/ISY503-Assessment3-NLP.git
+
+2. Install dependencies
+   pip install flask tensorflow
+
+3. Run the app
+   python app.py
+
+4. Open your browser and go to
+   http://127.0.0.1:5000
+
+### Usage
+- Type a product review into the text box
+- Click Analyse or press Enter
+- The result will show as Positive or Negative
