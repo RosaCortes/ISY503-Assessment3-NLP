@@ -123,6 +123,21 @@
 
 
 
+    .error-message {
+      color: #e05555;
+      font-size: 0.88rem;
+      margin-top: -0.5rem;
+      margin-bottom: 0.8rem;
+      padding: 0.6rem 1rem;
+      background: #fef1f1;
+      border-radius: 10px;
+      display: none;
+    }
+
+    textarea.invalid {
+      border-color: #e05555;
+    }
+
     .hint {
       text-align: center;
       color: #aaa;
@@ -164,6 +179,8 @@
 
   <textarea id="reviewInput" placeholder="Type or paste a review here..."></textarea>
 
+  <div class="error-message" id="errorMsg"></div>
+
   <button onclick="analyse()">Analyse</button>
 
   <div class="result-box" id="resultBox">
@@ -176,29 +193,59 @@
 </div>
 
 <script>
-  // -------------------------------------------------------
-  // MOCK predict function — replace this later with a real
-  // call to your Flask backend once predict.py is ready.
-  // -------------------------------------------------------
-  function mockPredict(text) {
-    const lower = text.toLowerCase();
-    const positiveWords = ["good","great","love","excellent","amazing","perfect","best","fantastic","happy","wonderful","nice","awesome"];
-    const negativeWords = ["bad","terrible","awful","hate","horrible","worst","poor","disappointing","broken","useless","ugly","slow"];
+  // sends the review text to Flask and gets back the result
+  async function analyse() {
+    const textBox = document.getElementById("reviewInput");
+    const errorMsg = document.getElementById("errorMsg");
+    const text = textBox.value.trim();
 
-    let score = 0;
-    positiveWords.forEach(w => { if (lower.includes(w)) score++; });
-    negativeWords.forEach(w => { if (lower.includes(w)) score--; });
+    // reset any previous error
+    textBox.classList.remove("invalid");
+    errorMsg.style.display = "none";
+    errorMsg.textContent = "";
 
-    return score >= 0 ? "Positive" : "Negative";
+    // check if empty
+    if (!text) {
+      showError(textBox, errorMsg, "Please enter a review before analysing.");
+      return;
+    }
+
+    // check if too short (less than 5 characters)
+    if (text.length < 5) {
+      showError(textBox, errorMsg, "Your review is too short. Please enter at least 5 characters.");
+      return;
+    }
+
+    // check if it's only special characters like $#@~ with no real words
+    const hasRealWords = /[a-zA-Z]{2,}/.test(text);
+    if (!hasRealWords) {
+      showError(textBox, errorMsg, "Please enter a valid review with actual words.");
+      return;
+    }
+
+    // check if it's mostly symbols (less than 50% letters)
+    const letterCount = (text.match(/[a-zA-Z]/g) || []).length;
+    if (letterCount / text.length < 0.5) {
+      showError(textBox, errorMsg, "Please enter a valid review with actual words.");
+      return;
+    }
+
+    // all good — calling the Flask /predict route
+    const response = await fetch("/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: text })
+    });
+
+    const data = await response.json();
+    showResult(data.result);
   }
-  // -------------------------------------------------------
 
-  function analyse() {
-    const text = document.getElementById("reviewInput").value.trim();
-    if (!text) return;
-
-    const result = mockPredict(text);   // <-- swap this line for Flask fetch later
-    showResult(result);
+  function showError(textBox, errorMsg, message) {
+    textBox.classList.add("invalid");
+    errorMsg.textContent = message;
+    errorMsg.style.display = "block";
+    document.getElementById("resultBox").style.display = "none";
   }
 
   function showResult(result) {
@@ -220,6 +267,12 @@
       e.preventDefault();
       analyse();
     }
+  });
+
+  // clear error when user starts typing again
+  document.getElementById("reviewInput").addEventListener("input", function() {
+    this.classList.remove("invalid");
+    document.getElementById("errorMsg").style.display = "none";
   });
 </script>
 
